@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useCallback, useEffect } from "react"
 
 
 function App() {
@@ -38,7 +38,28 @@ function App() {
   }
 
   // passwordgenaretor 
+  const [length , setlength]=useState(8)
+  const [allowedNumber , setAllowedNumber]=useState(false)
+  const [allowedCarecter , setallowedCarecter]=useState(false)
+  const [password , setpassword]=useState("")
 
+  const passwordgenaretor = useCallback(()=>{
+    let pass = ""
+    let star = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    if(allowedCarecter) star+= ".,:;*&%$#@/}{[+-_&`~]}"
+    if(allowedNumber) star+="0123456789"
+    for (let i = 0; i <= length; i++) {
+      let char = Math.floor(Math.random() * star.length + 1)
+      pass += star.charAt(char)
+    }
+
+    setpassword(pass)
+
+  },[length,allowedNumber, allowedCarecter, setpassword])
+
+  useEffect(()=>{
+    passwordgenaretor()
+  },[length,allowedNumber, allowedCarecter, setpassword])
 
 
   return (
@@ -62,15 +83,55 @@ function App() {
      </div>
 {/* /* password genaretor  */}
 
+      <div className="main rounded-lg   h-auto w-11/12 mx-auto bg-gray-300  p-4">
+        <div className=" w-full relative  text-center p-2 flex" >
+          <input type="text" className="bg-white  text-black rounded-lg w-11/12 py-3 px-2 mx-2"
+            value={password}
+            placeholder="passdword"
+            readOnly
+          />
+          <button className=" absolute right-0  w-2/12 py-3  bg-indigo-500 text-white p-2 rounded-r-lg " >copy </button>
+        </div>
+
+        <div className="  flex justify-between mx-5  ">
+          <div>
+             <input type="range"
+          min={6}
+          max={100}
+          value={length}
+          onChange={(e)=>{setlength(e.target.value)}}
+          
+          />
+          <label >legenth: {length}</label>
+          </div>
+
+          <div>
+            <input type="checkbox"
+              defaultChecked={allowedNumber}
+              id="numberid"
+              onChange={()=>{
+                setAllowedNumber((prev)=> !prev)
+              }}
+          />
+          <label >number</label>
+          </div>
+
+          <div>
+            <input type="checkbox"
+              defaultChecked={allowedCarecter}
+              id="caracterid"
+              onChange={()=>{
+                setallowedCarecter((prev)=> !prev)
+              }}
+          />
+          <label >Carecter</label>
+          </div>
+         
+          
+        </div>
+      </div>
 
 
-
-
-
-     
-     
-     
-     
      </>
   )
 }
